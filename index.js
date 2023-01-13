@@ -12,7 +12,7 @@ const PORT = process.env.PORT || 3001;
 //connection created to connect mysql to node to be able to use connection.query option
 const connection = mysql.createConnection({
     host: "localhost",
-    user:"root",
+    user: "root",
     password: process.env.DB_PASSWORD,
     database: "tracker_db"
 });
@@ -38,7 +38,7 @@ function viewDatabase() {
                 ],
             },
         ])
-//use switch case to run the function based on which option is selected that will run the function created
+        //use switch case to run the function based on which option is selected that will run the function created
         .then(function ({ response }) {
             switch (response) {
                 case "View all employees":
@@ -56,8 +56,8 @@ function viewDatabase() {
                 case "Add department":
                     addDepts();
                     break;
-                case "add role":
-                    addRole();
+                case "add a new role":
+                    addNewRole();
                     break;
                 case "Update employee role":
                     updateRole();
@@ -78,9 +78,9 @@ function viewEmployees() {
     CONCAT (manager.first_name, ' ', manager.last_name) 
     AS manager FROM employee LEFT JOIN role on employee.role_id = 
     role.id LEFT JOIN department on role.department_id = 
-    department.id LEFT JOIN employee manager ON employee.manager_id = manager.id`, 
-    function (err, res) {
-        if (err) throw err;  
+    department.id LEFT JOIN employee manager ON employee.manager_id = manager.id`,
+        function (err, res) {
+            if (err) throw err;
             console.table(res);
             viewDatabase();
         });
@@ -90,7 +90,7 @@ function viewDepts() {
     // Data from Dept is displayed on the console
     connection.query("SELECT * FROM department", function (err, res) {
         if (err) throw err;
-        
+
         console.table(res);
         viewDatabase();
     });
@@ -100,7 +100,7 @@ function viewRoles() {
     // Data from roles is displayed on the console 
     connection.query("SELECT * FROM role", function (err, res) {
         if (err) throw err;
-        
+
         console.table(res);
         viewDatabase();
     });
@@ -110,36 +110,36 @@ function addEmployee() {
     inquirer
         .prompt([
             {
-                type:"input",
-                name:"first_name",
+                type: "input",
+                name: "first_name",
                 message: "What is the new employee's first name?",
             },
             {
-                type:"input",
-                name:"last_name",
+                type: "input",
+                name: "last_name",
                 message: "What is the new employee's last name?",
             },
             {
-                type:"input",
-                name:"role",
+                type: "input",
+                name: "role",
                 message: "What position is this employee being hired for?",
             },
             {
-                type:"input",
-                name:"manager",
+                type: "input",
+                name: "manager",
                 message: "Who does the new employee report to? List by manager ID",
             },
         ])
         .then(function (data) {
             // After recieving data input, data is then placed into employee table
             connection.query("INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?,?,?,?)",
-            [data.first_name, data.last_name, data.role, data.manager],
-            function (err, result) {
-                if (err) throw err;
-                console.table(data);
-                viewDatabase();
-            });
-        });   
+                [data.first_name, data.last_name, data.role, data.manager],
+                function (err, result) {
+                    if (err) throw err;
+                    console.table(data);
+                    viewDatabase();
+                });
+        });
 };
 
 function addDepts() {
@@ -154,11 +154,11 @@ function addDepts() {
         .then(function (data) {
             // After recieving data input, data is then placed into dept table
             connection.query("INSERT INTO department (name) VALUES (?)",
-            [data.name],
-            function(err, res) {
-                if (err) throw err;
-               
-            })
+                [data.name],
+                function (err, res) {
+                    if (err) throw err;
+
+                })
             // Updated data is then displayed onto the console log as a table
             connection.query("SELECT * FROM department", function (err, res) {
                 if (err) throw err;
@@ -168,12 +168,12 @@ function addDepts() {
         });
 };
 
-function addRole() {
+function addNewRole() {
     inquirer
         .prompt([
             {
                 type: "input",
-                name: "title",
+                name: "add_role",
                 message: "What is the name of the new position?"
             },
             {
@@ -190,10 +190,10 @@ function addRole() {
         .then(function (data) {
             // After recieving data input, data is then placed into role table
             connection.query("INSERT INTO role (title, salary, department_id) VALUES (?,?,?);",
-            [data.title, data.salary, data.department_id],
-            function(err, res) {
-                if (err) throw err;
-            })
+                [data.title, data.salary, data.department_id],
+                function (err, res) {
+                    if (err) throw err;
+                })
             // Updated data is then displayed onto the console log as a table
             connection.query("SELECT * FROM role", function (err, res) {
                 if (err) throw err;
