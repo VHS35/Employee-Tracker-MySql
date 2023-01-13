@@ -9,6 +9,7 @@ require("dotenv").config();
 
 const PORT = process.env.PORT || 3001;
 
+//connection created to connect mysql to node to be able to use connection.query option
 const connection = mysql.createConnection({
     host: "localhost",
     user:"root",
@@ -37,7 +38,7 @@ function viewDatabase() {
                 ],
             },
         ])
-
+//use switch case to run the function based on which option is selected that will run the function created
         .then(function ({ response }) {
             switch (response) {
                 case "View all employees":

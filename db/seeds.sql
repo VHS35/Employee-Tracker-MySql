@@ -18,21 +18,21 @@ VALUES ( "Mortgage Compliance Manager", 70000, 1),
        ( "Underwriter", 53000, 3),
        ( "Human Resource Manager", 65000, 4),
        ( "Employment Specialist", 40000, 4),
-       ( "IT Manager", 150000, 4),
-       ( "Software Developer", 120000, 4),
-       ( "IT Support Specialist", 89000, 4);
+       ( "IT Manager", 150000, 5),
+       ( "Software Developer", 120000, 5),
+       ( "IT Support Specialist", 89000, 5);
    
 
 
 INSERT INTO employee(first_name, last_name, role_id, manager_id)
-VALUES ( "John", "Smith", 1, NULL),
+VALUES ( "John", "Smith", 1, 1),
        ( "Vanessa", "Mendez", 3, 1),
        ( "Megan", "Fox", 2, 1),
-       ( "Tom", "Cruise", 5, NULL),
-       ( "Steve", "Harvey", 4, 5),
-       ( "Rudy", "Garza", 3, 3),
-       ( "Klarissa", "Luna", 9, NULL),
+       ( "Tom", "Cruise", 5, 4),
+       ( "Steve", "Harvey", 4, 4),
+       ( "Rudy", "Garza", 3, Null),
+       ( "Klarissa", "Luna", 9, 7),
        ( "George", "Lopez", 10, 9),
-       ( "Nicholas", "Rios", 11, NULL),
-       ( "Michael", "Jordan", 13, 11);
+       ( "Nicholas", "Rios", 11, 9),
+       ( "Michael", "Jordan", 13, 9);
 
