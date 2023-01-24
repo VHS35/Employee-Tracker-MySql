@@ -9,54 +9,53 @@ require("dotenv").config();
 
 const PORT = process.env.PORT || 3001;
 
-//connection created to connect mysql to node to be able to use connection.query option
+//creates a connection to mysql
 const connection = mysql.createConnection({
     host: "localhost",
     user: "root",
     password: process.env.DB_PASSWORD,
     database: "tracker_db"
 });
-
-
-//create drop downs to make menu selections
-function viewDatabase() {
+//using inquire to list options to select
+function menuOptions() {
     inquirer
         .prompt([
             {
                 type: "list",
                 name: "response",
-                message: "What would you like to do?",
+                message: "Select an option?",
                 choices: [
-                    "View all employees",
                     "View all departments",
                     "View all roles",
+                    "View all employees",
                     "Add a new employee",
                     "Add department",
-                    "Add role",
+                    "Add a new role",
                     "Update employee role",
                     "quit",
                 ],
             },
         ])
-        //use switch case to run the function based on which option is selected that will run the function created
+        //use switch case and functions to add functionality to the above choices
         .then(function ({ response }) {
             switch (response) {
-                case "View all employees":
-                    viewEmployees();
-                    break;
+
                 case "View all departments":
-                    viewDepts();
+                    viewDpts();
                     break;
                 case "View all roles":
                     viewRoles();
+                    break;
+                case "View all employees":
+                    viewEmployees();
                     break;
                 case "Add a new employee":
                     addEmployee();
                     break;
                 case "Add department":
-                    addDepts();
+                    addDpt();
                     break;
-                case "add a new role":
+                case "Add a new role":
                     addNewRole();
                     break;
                 case "Update employee role":
@@ -65,12 +64,32 @@ function viewDatabase() {
                 case "quit":
                     connection.end();
                     break;
-
             };
         });
 };
-//create functions to respond to choice selected
-// create function to show all tables grouped together
+//using the connection.query to connect to mysql
+
+
+function viewDpts() {
+    connection.query("SELECT * FROM department", function (err, res) {
+        if (err) throw err;
+
+        console.table(res);
+        menuOptions();
+    });
+};
+
+
+function viewRoles() {
+
+    connection.query("SELECT * FROM role", function (err, res) {
+        if (err) throw err;
+
+        console.table(res);
+        menuOptions();
+    });
+};
+
 function viewEmployees() {
     connection.query(`SELECT employee.id, employee.first_name, employee.last_name, 
     role.title, role.salary, 
@@ -82,31 +101,12 @@ function viewEmployees() {
         function (err, res) {
             if (err) throw err;
             console.table(res);
-            viewDatabase();
+            menuOptions();
         });
 };
 
-function viewDepts() {
-    // Data from Dept is displayed on the console
-    connection.query("SELECT * FROM department", function (err, res) {
-        if (err) throw err;
-
-        console.table(res);
-        viewDatabase();
-    });
-};
-
-function viewRoles() {
-    // Data from roles is displayed on the console 
-    connection.query("SELECT * FROM role", function (err, res) {
-        if (err) throw err;
-
-        console.table(res);
-        viewDatabase();
-    });
-};
-
 function addEmployee() {
+
     inquirer
         .prompt([
             {
@@ -120,50 +120,128 @@ function addEmployee() {
                 message: "What is the new employee's last name?",
             },
             {
-                type: "input",
+                type: "list",
                 name: "role",
-                message: "What position is this employee being hired for?",
+                message: "Please select a role",
+                choices:
+                    [
+                        {
+                            value: 1,
+                            name: 'Mortgage Compliance Manager',
+                        },
+                        {
+                            value: 2,
+                            name: 'Loan Servicing Specialist',
+                        },
+                        {
+                            value: 3,
+                            name: 'Quality Administrator',
+                        },
+                        {
+                            value: 4,
+                            name: 'Escalation Representative',
+                        },
+                        {
+                            value: 5,
+                            name: 'Escalation Manager',
+                        },
+                        {
+                            value: 6,
+                            name: 'Insurance Manager',
+                        },
+                        {
+                            value: 7,
+                            name: 'Claims Adjuster',
+                        },
+                        {
+                            value: 8,
+                            name: 'Underwriter',
+                        },
+                        {
+                            value: 9,
+                            name: 'Human Resource Manager',
+                        },
+                        {
+                            value: 10,
+                            name: 'Employment Specialist',
+                        },
+                        {
+                            value: 11,
+                            name: 'IT Manager',
+                        },
+                        {
+                            value: 12,
+                            name: 'Software Developer',
+                        },
+                        {
+                            value: 13,
+                            name: 'IT Support Specialist',
+                        },
+                     
+                 
+            ,],
+
             },
-            {
-                type: "input",
-                name: "manager",
-                message: "Who does the new employee report to? List by manager ID",
+{
+        type: "input",
+        name: "manager",
+        message: "Please enter manager ID",
+        choices: [{
+            value: 1,
+            name: "Mortgage Compliance Manager",
+        },
+        {
+            value: 5,
+            name: "Escalation Manager",
+        },
+        {
+            value: 6,
+            name: "Insurance Manger",
+        },
+        {
+            value: 9,
+            name: "Human Resource Manager",
+        },
+        {
+            value: 11,
+            name: "IT Manager",
+        },
+        ]
             },
         ])
         .then(function (data) {
-            // After recieving data input, data is then placed into employee table
-            connection.query("INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?,?,?,?)",
-                [data.first_name, data.last_name, data.role, data.manager],
-                function (err, result) {
-                    if (err) throw err;
-                    console.table(data);
-                    viewDatabase();
-                });
-        });
+
+                connection.query("INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?,?,?,?)",
+                    [data.first_name, data.last_name, data.role, data.manager],
+                    function (err, result) {
+                        if (err) throw err;
+                        console.table(data);
+                        menuOptions();
+                    });
+            });
 };
 
-function addDepts() {
+function addDpt() {
     inquirer
         .prompt([
             {
                 type: "input",
-                name: "name",
-                message: "What is the new department called?",
+                name: "new_dept",
+                message: "What is the new department name?",
             },
         ])
         .then(function (data) {
-            // After recieving data input, data is then placed into dept table
             connection.query("INSERT INTO department (name) VALUES (?)",
-                [data.name],
+                [data.new_dept],
                 function (err, res) {
                     if (err) throw err;
 
                 })
-            // Updated data is then displayed onto the console log as a table
+
             connection.query("SELECT * FROM department", function (err, res) {
                 if (err) throw err;
                 console.table(res);
-                viewDatabase();
+                menuOptions();
             });
         });
 };
@@ -173,13 +251,13 @@ function addNewRole() {
         .prompt([
             {
                 type: "input",
-                name: "add_role",
-                message: "What is the name of the new position?"
+                name: "new_title",
+                message: "What is the new role name?",
             },
             {
                 type: "input",
                 name: "salary",
-                message: "What is the new position's base salary?"
+                message: "What is the base salary?"
             },
             {
                 type: "input",
@@ -188,48 +266,103 @@ function addNewRole() {
             },
         ])
         .then(function (data) {
-            // After recieving data input, data is then placed into role table
-            connection.query("INSERT INTO role (title, salary, department_id) VALUES (?,?,?);",
-                [data.title, data.salary, data.department_id],
+            connection.query("INSERT INTO role(title, salary, department_id) VALUES (?,?,?);",
+                [data.new_title, data.salary, data.department_id],
                 function (err, res) {
                     if (err) throw err;
                 })
-            // Updated data is then displayed onto the console log as a table
+
             connection.query("SELECT * FROM role", function (err, res) {
                 if (err) throw err;
                 console.table(res);
-                viewDatabase();
+                menuOptions();
             });
 
         });
 };
-
+// update selected employee 
 function updateRole() {
     inquirer
         .prompt([
             {
                 type: "input",
-                name: "idEmp",
+                name: "employee_id",
                 message: "Which employee is being updated? Please enter ID."
             },
             {
-                type: "input",
-                name: "newRole",
-                message: "Which position is the employee being updated to? Please enter ID."
+                type: "rawlist",
+                name: "roleUpdate",
+                message: "What is the employees new role?",
+                choices:
+                [
+                    {
+                        value: 1,
+                        name: 'Mortgage Compliance Manager',
+                    },
+                    {
+                        value: 2,
+                        name: 'Loan Servicing Specialist',
+                    },
+                    {
+                        value: 3,
+                        name: 'Quality Administrator',
+                    },
+                    {
+                        value: 4,
+                        name: 'Escalation Representative',
+                    },
+                    {
+                        value: 5,
+                        name: 'Escalation Manager',
+                    },
+                    {
+                        value: 6,
+                        name: 'Insurance Manager',
+                    },
+                    {
+                        value: 7,
+                        name: 'Claims Adjuster',
+                    },
+                    {
+                        value: 8,
+                        name: 'Underwriter',
+                    },
+                    {
+                        value: 9,
+                        name: 'Human Resource Manager',
+                    },
+                    {
+                        value: 10,
+                        name: 'Employment Specialist',
+                    },
+                    {
+                        value: 11,
+                        name: 'IT Manager',
+                    },
+                    {
+                        value: 12,
+                        name: 'Software Developer',
+                    },
+                    {
+                        value: 13,
+                        name: 'IT Support Specialist',
+                    },
+                 
+             
+        ,],
+
             },
         ])
         .then(function (data) {
-            connection.query(
-                // SQL feature that will change the selected employee and update them with a new role
-                "UPDATE employee SET role_id = ? WHERE id = ?",
-                [data.newRole, data.idEmp],
+            connection.query("UPDATE employee SET role_id = ? WHERE id = ?",
+                [data.roleUpdate, data.employee_id],
                 function (err, res) {
                     if (err) throw err;
                     console.table(res);
-                    viewDatabase();
+                    menuOptions();
                 }
             );
         });
 };
 
-viewDatabase();
+menuOptions();

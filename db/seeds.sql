@@ -1,4 +1,4 @@
-USE tracker_db;
+.USE tracker_db;
 
 INSERT INTO department(name)
 VALUES ( "Mortgage"),
@@ -28,11 +28,11 @@ INSERT INTO employee(first_name, last_name, role_id, manager_id)
 VALUES ( "John", "Smith", 1, 1),
        ( "Vanessa", "Mendez", 3, 1),
        ( "Megan", "Fox", 2, 1),
-       ( "Tom", "Cruise", 5, 4),
+       ( "Tom", "Cruise", 5, NULL),
        ( "Steve", "Harvey", 4, 4),
-       ( "Rudy", "Garza", 3, Null),
-       ( "Klarissa", "Luna", 9, 7),
+       ( "Rudy", "Garza", 3, 5),
+       ( "Klarissa", "Luna", 9, NULL),
        ( "George", "Lopez", 10, 9),
-       ( "Nicholas", "Rios", 11, 9),
+       ( "Nicholas", "Rios", 11, Null),
        ( "Michael", "Jordan", 13, 9);
 
